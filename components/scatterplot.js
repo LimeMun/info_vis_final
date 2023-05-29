@@ -1,6 +1,6 @@
 class Scatterplot {
     margin = {
-        top: 50, right: 100, bottom: 90, left: 150
+        top: 50, right: 100, bottom: 60, left: 150
     }
 
     constructor(svg, tooltip, data, width = 1000, height = 600) {

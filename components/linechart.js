@@ -1,6 +1,6 @@
 class Linechart {
     margin = {
-        top: 50, right: 140, bottom: 90, left: 140
+        top: 50, right: 140, bottom: 20, left: 140
     }
 
     constructor(svg, tooltip, data, width = 1500, height = 600) {
@@ -98,12 +98,12 @@ class Linechart {
             .transition()
             .call(d3.axisBottom(this.xScale))
             .style("font-size", "16px");
-        this.svg.append("text")
-            .attr("x", this.margin.left + this.width / 2)
-            .attr("y", this.margin.top + this.height + 50)
-            .attr("text-anchor", "middle")
-            .text(xVar)
-            .style("font-size", "24px");
+        // this.svg.append("text")
+        //     .attr("x", this.margin.left + this.width / 2)
+        //     .attr("y", this.margin.top + this.height + 50)
+        //     .attr("text-anchor", "middle")
+        //     .text(xVar)
+        //     .style("font-size", "24px");
 
         this.yAxis
             .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`)

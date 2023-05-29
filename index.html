@@ -74,6 +74,7 @@
             opacity: 0;
             margin-top: 0px;
             max-width: 1500px;
+            border-bottom: 1px solid black;
         }
 
         .sliderrange{
@@ -162,33 +163,21 @@
             </svg>
         </div>
         <div class="slider-container">
-
+            <label class="sliderrange" style="font-size: 24px;" for="slider-range">Time Slider</label>
             <div id="slider-range"></div>
             <div class="d-flex justify-content-between">
                 <span id="start-value">0</span>
                 <span id="end-value">600</span>
             </div>
-            <label class="sliderrange" for="slider-range">Time Slider</label>
+            
         </div>
-        <div width="1800" >
-            <svg width="1800"height="600" id="histogram">
+        <div width="1700">
+            <svg width="1700"height="800" id="histogram">
             </svg>
         </div>
+        <label class="logtype" style="font-size: 24px; opacity:0; font-weight:bold">Log Type Count</label>
+ 
 
-        <table class="table table-striped text-center">
-            <thead>
-                <tr>
-                    <th>Petal Length</th>
-                    <th>Petal Width</th>
-                    <th>Sepal Length</th>
-                    <th>Sepal Width</th>
-                    <th>Variety</th>
-                </tr>
-            </thead>
-            <tbody id="data-table">
-
-            </tbody>
-        </table>
 
     </main>
 
@@ -218,7 +207,8 @@
                 sliderStart = ui.values[0];
                 sliderEnd = ui.values[1];
                 linechart.update("Time", "Log_len_sum", make_linechart_data(all_data), now_color, sliderStart, sliderEnd);
-                make_histogram_data();
+                histogram.update(make_histogram_data(), "Log_type", now_color);
+                d3.select(".logtype").transition().style("opacity", 1);
             }
         });
 
@@ -251,7 +241,7 @@
 
         function make_histogram_data(){
             let histogramData = all_data.filter(d => d.Space == now_space && d.Page_no == now_page_no && d["Time(sec)"] >= sliderStart && d["Time(sec)"] <= sliderEnd);
-            console.log(histogramData);
+            return histogramData;
         }
 
         function setLinechart_and_Historgram() {
@@ -324,11 +314,14 @@
                 histogram.initialize();
 
                 piechart.on("clicked", (space, color) =>{
-                    let xVar = "Log_len_sum"
-                    let yVar = "Log_count"
                     now_space = space
                     now_color = color;
-                    scatterplot.update(xVar, yVar, now_space, now_start_percent, now_end_percent, now_color, now_filter_attribute);
+                    if(now_filter_attribute == "Log_len_sum"){
+                        scatterplot.update("Log_len_sum", "Log_count", now_space, now_start_percent, now_end_percent, now_color, now_filter_attribute);
+                    }
+                    else{
+                        scatterplot.update("Log_count", "Log_len_sum", now_space, now_start_percent, now_end_percent, now_color, now_filter_attribute);
+                    }
                     d3.select(".percentage_input")
                         .transition()
                         .style("opacity", 1);
@@ -340,7 +333,8 @@
                     d3.select(".slider-container")
                         .transition()
                         .style("opacity", 1);
-                    make_histogram_data();
+                    histogram.update(make_histogram_data(), "Log_type", now_color);
+                    d3.select(".logtype").transition().style("opacity", 1);
                 });
             });
     </script>
