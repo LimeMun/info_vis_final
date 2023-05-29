@@ -32,7 +32,6 @@ class Linechart {
 
     update(xVar, yVar, input_data, color, xStart, xEnd) {
         let new_data = input_data.filter(d => d.Time >= xStart && d.Time <= xEnd);
-        console.log(new_data);
         this.xVar = xVar;
         this.yVar = yVar;
 
@@ -43,6 +42,28 @@ class Linechart {
         this.circles = this.container.selectAll("circle")
             .data(filteredData)
             .join("circle")
+            .on("mouseover", (e, d) => {
+                this.tooltip.select(".tooltip-inner")
+                    .html(`${this.xVar}: ${d[this.xVar]}<br/>${this.yVar}: ${d[this.yVar]}`);
+
+                Popper.createPopper(e.target, this.tooltip.node(), {
+                    placement: 'top',
+                    modifiers: [
+                        {
+                            name: 'arrow',
+                            options: {
+                                element: this.tooltip.select(".tooltip-arrow").node(),
+                            },
+                        },
+                    ],
+                });
+
+                this.tooltip.style("display", "block");
+            })
+            
+            .on("mouseout", (d) => {
+                this.tooltip.style("display", "none");
+            })
 
         this.circles
             .attr("cx", d => this.xScale(d[xVar]))

@@ -29,11 +29,6 @@ class Scatterplot {
 
         this.container.attr("transform", `translate(${this.margin.left}, ${this.margin.top})`);
 
-        // this.brush = d3.brush()
-        //     .extent([[0, 0], [this.width, this.height]])
-        //     .on("start brush", (event) => {
-        //         this.brushCircles(event);
-        //     })
     }
 
     update(xVar, yVar, space, start_percent, end_percent, now_color, filtering_attribute) {
@@ -50,7 +45,6 @@ class Scatterplot {
 
         // 데이터 추출
         const new_data = filteredData.slice(startCount, startCount + requiredDataCount);
-        console.log(new_data)
 
         this.xVar = xVar;
         this.yVar = yVar;
@@ -58,7 +52,6 @@ class Scatterplot {
         this.xScale.domain(d3.extent(new_data, d => d[xVar])).range([0, this.width]);
         this.yScale.domain(d3.extent(new_data, d => d[yVar])).range([this.height, 0]);
 
-        // this.container.call(this.brush);
 
         this.circles = this.container.selectAll("circle")
             .data(new_data)
@@ -108,12 +101,18 @@ class Scatterplot {
             .duration(1000)
             .call(d3.axisBottom(this.xScale))
             .style("font-size", "16px");
-        this.svg.append("text")
+
+        let xLabel = this.svg.select(".x-label");
+        if (xLabel.empty()) {
+            xLabel = this.svg.append("text")
             .attr("x", this.margin.left + this.width / 2)
             .attr("y", this.margin.top + this.height + 50)
             .attr("text-anchor", "middle")
-            .text(xVar)
+            .attr("class", "x-label")
             .style("font-size", "24px");
+        }
+        xLabel.text(xVar)
+            .transition();
 
         this.yAxis
             .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`)
@@ -121,33 +120,19 @@ class Scatterplot {
             .duration(1000)
             .call(d3.axisLeft(this.yScale))
             .style("font-size", "16px");
-
-        this.svg.append("text")
+        let yLabel = this.svg.select(".y-label");
+        if (yLabel.empty()) {
+            yLabel = this.svg.append("text")
             .attr("transform", "rotate(-90)")
             .attr("x", -(this.margin.top + this.height / 2))
             .attr("y", this.margin.left - 100)
             .attr("text-anchor", "middle")
-            .text(yVar)
+            .attr("class", "y-label")
             .style("font-size", "24px");
+        }
+        yLabel.text(yVar)
+            .transition();
     }
-
-    // isBrushed(d, selection) {
-    //     let [[x0, y0], [x1, y1]] = selection; // destructuring assignment
-    //     let x = this.xScale(d[this.xVar]);
-    //     let y = this.yScale(d[this.yVar]);
-
-    //     return x0 <= x && x <= x1 && y0 <= y && y <= y1;
-    // }
-
-    // this method will be called each time the brush is updated.
-    // brushCircles(event) {
-    //     let selection = event.selection;
-
-    //     this.circles.classed("brushed", d => this.isBrushed(d, selection));
-
-    //     if (this.handlers.brush)
-    //         this.handlers.brush(this.data.filter(d => this.isBrushed(d, selection)));
-    // }
 
     on(eventType, handler) {
         this.handlers[eventType] = handler;
