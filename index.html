@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+
+
+
+    <script src="components/scatterplot.js"></script>
+    <script src="components/histogram.js"></script>
+    <script src="components/pc.js"></script>
+    <script src="components/datatable.js"></script>
+    <script src="components/piechart.js"></script>
+    <script src="components/linechart.js"></script>
+
+
+    <title>My Scatterplot</title>
+    <style>
+        body {
+            background: #eee;
+            overflow-y: scroll;
+        }
+
+        .container {
+            width: 2300px;
+            background: white;
+            max-width: 3000px;
+
+        }
+
+        .brushed {
+            stroke-width: 1;
+            stroke: gray;
+            r: 5;
+        }
+        .slider-container {
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        #slider-range {
+            width: 100%;
+        }
+
+        #start-value,
+        #end-value {
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+        }
+
+        .ui-slider .ui-slider-handle {
+            background-color: #337ab7;
+            border-color: #2e6da4;
+            height: 20px;
+            width: 20px;
+        }
+
+        .ui-slider .ui-slider-range {
+            background-color: #337ab7;
+        }
+
+        .slider-container{
+            margin-top: 0px;
+            max-width: 1500px;
+        }
+
+        .sliderrange{
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="container navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1">My Scatterplot</span>
+            </div>
+        </nav>
+
+    </header>
+
+    <main class="container pb-3 text-center ">
+        
+        <div style="display: flex; align-items:center; margin-top:50px;" class="text-center">
+            
+            <svg width="600" height="500" id="piechart">
+            </svg>
+
+            <div class="tooltip bs-tooltip-top show" id="sc-tooltip" role="tooltip" style="display:none">
+                <div class="tooltip-arrow"></div>
+                <div class="tooltip-inner">
+                    Some tooltip text!
+                </div>
+            </div>
+            <div width="1200" height="600" style="display: flex; opacity:0;" class = "percentage_input">
+                <div style="align-items:center;" class="row justify-content-center">
+                        
+                    <div class="col-40">
+                      <form>
+                        <div class="form-row align-items-center">
+                            <div class="row pt-2 col-40 gx-5">
+                                <div class="col-2 text-end pe-1"><strong>Attribute</strong></div>
+                                <div class="col-40 mb-3" >
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="filterting_attribute" value="Log_len_sum" id="x-sl"
+                                            checked>
+                                        <label class="form-check-label" for="x-sl">Log_len_sum</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="filterting_attribute" value="Log_count" id="x-sw">
+                                        <label class="form-check-label" for="x-sw">Log_count</label>
+                                    </div>
+                                </div>
+                              </div>
+                          <div class="col-40 mb-3">
+                            <label for="start_percentage" class="form-label"><strong>Start Percentage</strong></label>
+                            <div class="input-group">
+                              <input type="number" class="form-control" id="start_percentage" placeholder="Enter start percentage" value="0">
+                              <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-40 mb-3">
+                            <label for="end_percentage" class="form-label"><strong>End Percentage</strong> </label>
+                            <div class="input-group">
+                              <input type="number" class="form-control" id="end_percentage" placeholder="Enter end percentage" value="100">
+                              <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-40">
+                            <button type="button" class="btn btn-primary" onclick="getPercentages()">Set Percentages</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                <svg width="1000"height="600" id="scatterplot">
+                </svg>
+            </div>
+            
+        </div>
+
+        <div width="1800" >
+            <svg width="1800"height="600" id="linechart" class="text-center">
+            </svg>
+        </div>
+        <div class="slider-container">
+
+            <div id="slider-range"></div>
+            <div class="d-flex justify-content-between">
+                <span id="start-value">0</span>
+                <span id="end-value">600</span>
+            </div>
+            <label class="sliderrange" for="slider-range">Time Slider</label>
+        </div>
+
+        <table class="table table-striped text-center">
+            <thead>
+                <tr>
+                    <th>Petal Length</th>
+                    <th>Petal Width</th>
+                    <th>Sepal Length</th>
+                    <th>Sepal Width</th>
+                    <th>Variety</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+
+            </tbody>
+        </table>
+
+    </main>
+
+    <script>
+        let data, brushedData, scatterplot, histogram, linechart, 
+            dataTable, now_space, noew_color, now_filter_attribute, 
+            now_start_percent, now_end_percent, now_page_no,
+            sliderStart, sliderEnd, all_data;
+        now_filter_attribute = "Log_len_sum";
+        now_start_percent = 0;
+        now_end_percent = 100;
+        sliderStart = 0;
+        sliderEnd = 600;
+        //Slider 셋팅
+        const sliderRange = $("#slider-range");
+        const startValueLabel = $("#start-value");
+        const endValueLabel = $("#end-value");
+
+        sliderRange.slider({
+            range: true,
+            min: 0,
+            max: 600,
+            values: [0, 600],
+            slide: function(event, ui) {
+                startValueLabel.text(ui.values[0]);
+                endValueLabel.text(ui.values[1]);
+                sliderStart = ui.values[0];
+                sliderEnd = ui.values[1];
+                console.log(sliderStart, sliderEnd)
+                linechart.update("Time", "Log_len_sum", make_linechart_data(all_data), now_color, sliderStart, sliderEnd);
+            }
+        });
+
+        startValueLabel.text(sliderRange.slider("values", 0));
+        endValueLabel.text(sliderRange.slider("values", 1));
+        //Slider 셋팅
+        function make_scatterplot_data(data) {
+            const groupedData = {};
+
+            data.forEach(item => {
+            const key = `${item.Space}-${item.Page_no}`;
+            if (groupedData[key]) {
+                groupedData[key].Log_len_sum += item.Log_len;
+                groupedData[key].Log_count += 1;
+            } else {
+                groupedData[key] = {
+                Space: item.Space,
+                Page_no: item.Page_no,
+                Log_len_sum: item.Log_len,
+                Log_count: 1
+                };
+            }
+            });
+
+            const result = Object.values(groupedData);
+            return result
+        }
+
+        function getPercentages() {
+            const startInput = document.getElementById("start_percentage");
+            const endInput = document.getElementById("end_percentage");
+            let filtering_attributes = d3.select("input[type=radio][name=filterting_attribute]:checked").property("value");
+            now_filter_attribute = filtering_attributes;
+        
+            now_start_percent= parseFloat(startInput.value);
+            now_end_percent = parseFloat(endInput.value);
+            scatterplot.update("Log_len_sum", "Log_count", now_space, now_start_percent, now_end_percent, now_color, now_filter_attribute)
+        }
+
+        function make_linechart_data(data){
+        
+            // 필터링된 데이터를 저장할 변수 초기화
+            let timeData = [];
+
+            // 데이터 필터링 및 시간별 Log_len_sum, Log_count, Time 계산
+            data.forEach(d => {
+                if (d.Space ===now_space && d.Page_no === now_page_no) {
+                    const time = d["Time(sec)"];
+                    const existingData = timeData.find(item => item.Time === time);
+                    if (existingData) {
+                        existingData.Log_len_sum += d.Log_len;
+                        existingData.Log_count++;
+                    } else {
+                        timeData.push({
+                            Time: time,
+                            Log_len_sum: d.Log_len,
+                            Log_count: 1
+                        });
+                    }
+                }
+            });
+            const newData = [];
+
+            for (let i = 0; i <= 600; i++) {
+                const existingData = timeData.find(d => d.Time === i);
+
+                if (existingData) {
+                    newData.push(existingData);
+                    } else {
+                        newData.push({
+                        Time: i,
+                        Log_len_sum: 0,
+                        Log_count: 0
+                        });
+                    }
+            }
+
+            return newData;
+        }
+
+        d3.csv("https://raw.githubusercontent.com/LimeMun/info_vis_final/main/info_vs_data_600.csv")
+            .then(csvData => {
+                all_data = csvData;
+                csvData.forEach(d => {
+                    d["Time(sec)"] = +d["Time(sec)"];
+                    d["Page_no"] = +d["Page_no"];
+                    d["Log_type"] = +d["Log_type"];
+                    d["Log_len"] = +d["Log_len"];
+                    d["Is_in_old_sublist"] = +d["Is_in_old_sublist"];
+                });
+                piechart = new Piechart(400, 400, csvData);
+                scatterplot = new Scatterplot("#scatterplot", "#sc-tooltip", make_scatterplot_data(csvData));
+                scatterplot.initialize();
+                linechart = new Linechart("#linechart", "#sc-tooltip", csvData);
+                linechart.initialize();
+                piechart.on("clicked", (space, color) =>{
+                    let xVar = "Log_len_sum"
+                    let yVar = "Log_count"
+                    now_space = space
+                    now_color = color;
+                    scatterplot.update(xVar, yVar, now_space, now_start_percent, now_end_percent, now_color, now_filter_attribute);
+                    d3.select(".percentage_input")
+                        .transition()
+                        .style("opacity", 1);
+                });
+
+                scatterplot.on("clicked", (page_no) =>{
+                    now_page_no = page_no;
+                    linechart.update("Time", "Log_len_sum", make_linechart_data(csvData), now_color, sliderStart, sliderEnd);
+                });
+
+                linechart.on("brush", (brushedItems) => {
+                    brushedData = brushedItems;
+                    console.log(brushedItems);
+                });
+
+                
+
+
+
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
