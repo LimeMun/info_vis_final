@@ -169,20 +169,16 @@
             </svg>
         </div>
         <label class="logtype" style="font-size: 24px; opacity:0; font-weight:bold">Log Type Count</label>
-        <div class="input-group mb-3 mt-3" style="max-width: 300px; margin: auto; opacity:0; ">
+        <div class="input-group mb-3 mt-3" style="max-width: 300px; margin: auto; opacity:0;" id="select_input">
             <select class="form-select" id="table-select" onchange="handleTableSelect()">
-                <option value="Time(Sec)">Time(Sec)</option>
-                <option value="Space">Space</option>
-                <option value="Page_no">Page_no</option>
-                <option value="Log_type">Log_type</option>
+                <option value="Time(sec)">Time(sec)</option>
                 <option value="Log_len">Log_len</option>
-                <option value="Is_in_old_sublist">Is_in_old_sublist</option>
             </select>
         </div>
         <table class="table table-striped text-center" style="opacity:0; ">
             <thead>
                 <tr>
-                    <th>Time(Sec)</th>
+                    <th>Time(sec)</th>
                     <th>Space</th>
                     <th>Page_no</th>
                     <th>Log_type</th>
@@ -367,7 +363,7 @@
                     d3.select(".logtype").transition().style("opacity", 1);
                     dataTable.update(histogram_data, all_data.columns);
                     d3.select(".table-striped").transition().style("opacity", 1);
-                    d3.select(".input-group").transition().style("opacity", 1);
+                    d3.select("#select_input").transition().style("opacity", 1);
                 });
                 
             });
