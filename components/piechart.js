@@ -14,16 +14,16 @@ class Piechart {
     make_piechart(data, width, height){
         const radius = Math.min(width, height) / 2;
         const svg = d3
-        .select("#piechart")
-        .append("svg")
-        .attr("width", width + this.margin.left + this.margin.right)
-        .attr("height", height)
+            .select("#piechart")
+            .append("svg")
+            .attr("width", width + this.margin.left + this.margin.right)
+            .attr("height", height)
         const g = svg
         .append("g")
-        .attr(
-            "transform",
-            `translate(${width / 2 + this.margin.left}, ${height / 2})`
-        )
+            .attr(
+                "transform",
+                `translate(${width / 2 + this.margin.left}, ${height / 2 + this.margin.top})`
+            )
         const color = d3.scaleOrdinal(d3.schemeCategory10);
 
         const pie = d3.pie();
@@ -142,7 +142,7 @@ class Piechart {
             .select("#piechart")
             .append("text")
             .attr("x", width / 2 + this.margin.left) // 제목의 x 좌표 설정
-            .attr("y", height + 30) // 제목의 y 좌표 조정
+            .attr("y", height + this.margin.top + this.margin.bottom) // 제목의 y 좌표 조정
             .text("Log sum Per Table") // 제목 텍스트
             .style("text-anchor", "middle") // 가운데 정렬
             .style("font-size", "30px") // 글꼴 크기 설정
