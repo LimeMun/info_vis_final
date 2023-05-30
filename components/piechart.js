@@ -145,7 +145,7 @@ class Piechart {
             .attr("y", height + 30) // 제목의 y 좌표 조정
             .text("Log sum Per Table") // 제목 텍스트
             .style("text-anchor", "middle") // 가운데 정렬
-            .style("font-size", "24px") // 글꼴 크기 설정
+            .style("font-size", "30px") // 글꼴 크기 설정
             .style("font-weight", "bold") // 글꼴 스타일 설정
             .style("fill", "black"); // 글꼴 색상 설정
     }

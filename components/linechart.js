@@ -90,6 +90,7 @@ class Linechart {
                 
                 exit => exit.remove()
             )
+        
             
             
 
@@ -111,13 +112,18 @@ class Linechart {
             .call(d3.axisLeft(this.yScale))
             .style("font-size", "16px");
 
-        this.svg.append("text")
+
+        let yLabel = this.svg.select(".y-label");
+        if (yLabel.empty()) {
+            yLabel = this.svg.append("text")
             .attr("transform", "rotate(-90)")
             .attr("x", -(this.margin.top + this.height / 2))
             .attr("y", this.margin.left - 80)
             .attr("text-anchor", "middle")
-            .text(yVar)
-            .style("font-size", "24px");
+            .attr("class", "y-label")
+            .style("font-size", "24px")
+            .text(yVar);
+        }
     }
     
 
