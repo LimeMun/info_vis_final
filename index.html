@@ -169,7 +169,7 @@
             </svg>
         </div>
         <label class="logtype" style="font-size: 24px; opacity:0; font-weight:bold">Log Type Count</label>
-        <div class="input-group mb-3 mt-3" style="max-width: 300px; margin: auto;">
+        <div class="input-group mb-3 mt-3" style="max-width: 300px; margin: auto; opacity:0; ">
             <select class="form-select" id="table-select" onchange="handleTableSelect()">
                 <option value="Time(Sec)">Time(Sec)</option>
                 <option value="Space">Space</option>
@@ -179,7 +179,7 @@
                 <option value="Is_in_old_sublist">Is_in_old_sublist</option>
             </select>
         </div>
-        <table class="table table-striped text-center">
+        <table class="table table-striped text-center" style="opacity:0; ">
             <thead>
                 <tr>
                     <th>Time(Sec)</th>
@@ -366,6 +366,8 @@
                     histogram.update(histogram_data, "Log_type", now_color);
                     d3.select(".logtype").transition().style("opacity", 1);
                     dataTable.update(histogram_data, all_data.columns);
+                    d3.select(".table-striped").transition().style("opacity", 1);
+                    d3.select(".input-group").transition().style("opacity", 1);
                 });
                 
             });
