@@ -21,6 +21,7 @@
     <script src="components/histogram.js"></script>
     <script src="components/piechart.js"></script>
     <script src="components/linechart.js"></script>
+    <script src="components/datatable.js"></script>
 
 
     <title>My Scatterplot</title>
@@ -168,6 +169,31 @@
             </svg>
         </div>
         <label class="logtype" style="font-size: 24px; opacity:0; font-weight:bold">Log Type Count</label>
+        <div class="input-group mb-3 mt-3" style="max-width: 300px; margin: auto;">
+            <select class="form-select" id="table-select" onchange="handleTableSelect()">
+                <option value="Time(Sec)">Time(Sec)</option>
+                <option value="Space">Space</option>
+                <option value="Page_no">Page_no</option>
+                <option value="Log_type">Log_type</option>
+                <option value="Log_len">Log_len</option>
+                <option value="Is_in_old_sublist">Is_in_old_sublist</option>
+            </select>
+        </div>
+        <table class="table table-striped text-center">
+            <thead>
+                <tr>
+                    <th>Time(Sec)</th>
+                    <th>Space</th>
+                    <th>Page_no</th>
+                    <th>Log_type</th>
+                    <th>Log_len</th>
+                    <th>Is_in_old_sublist</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+
+            </tbody>
+        </table>
  
 
 
@@ -199,15 +225,24 @@
                 sliderStart = ui.values[0];
                 sliderEnd = ui.values[1];
                 linechart.update("Time", "Log_len_sum", make_linechart_data(all_data), now_color, sliderStart, sliderEnd);
-                histogram.update(make_histogram_data(), "Log_type", now_color);
+                let histogram_data = make_histogram_data();
+                histogram.update(histogram_data, "Log_type", now_color);
                 d3.select(".logtype").transition().style("opacity", 1);
+                dataTable.update(histogram_data, all_data.columns);
             }
         });
 
         startValueLabel.text(sliderRange.slider("values", 0));
         endValueLabel.text(sliderRange.slider("values", 1));
         //Slider 셋팅
-
+        function handleTableSelect(){
+            let tableSelect = document.getElementById("table-select");
+            let tableSelectValue = tableSelect.options[tableSelect.selectedIndex].value;
+            let histogram_data = make_histogram_data();
+            histogram_data.sort((a, b) => d3.descending(a[tableSelectValue], b[tableSelectValue]));
+            console.log(histogram_data);
+            dataTable.update(histogram_data, all_data.columns);
+        }
 
         function make_scatterplot_data(data) {
             const groupedData = {};
@@ -291,6 +326,7 @@
         d3.csv("https://raw.githubusercontent.com/LimeMun/info_vis_final/main/info_vs_data_600.csv")
             .then(csvData => {
                 all_data = csvData;
+                console.log(all_data);
                 csvData.forEach(d => {
                     d["Time(sec)"] = +d["Time(sec)"];
                     d["Page_no"] = +d["Page_no"];
@@ -304,6 +340,7 @@
                 linechart.initialize();
                 histogram = new Histogram("#histogram");
                 histogram.initialize();
+                dataTable = new DataTable("#data-table");
 
                 piechart.on("clicked", (space, color) =>{
                     now_space = space
@@ -325,9 +362,12 @@
                     d3.select(".slider-container")
                         .transition()
                         .style("opacity", 1);
-                    histogram.update(make_histogram_data(), "Log_type", now_color);
+                    let histogram_data = make_histogram_data();
+                    histogram.update(histogram_data, "Log_type", now_color);
                     d3.select(".logtype").transition().style("opacity", 1);
+                    dataTable.update(histogram_data, all_data.columns);
                 });
+                
             });
     </script>
 
